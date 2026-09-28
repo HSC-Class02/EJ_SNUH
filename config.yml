@@ -1,0 +1,8 @@
+company_name: "서울대학교병원"
+start_year: 2010
+fs_div: "OFS"
+report_types:
+  annual: "11011"
+  half_year: "11012"
+  quarterly_q1: "11013"
+  quarterly_q3: "11014"
