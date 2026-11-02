@@ -63,6 +63,7 @@ jobs:
           fi
 
   deploy:
+    needs: collect
     runs-on: ubuntu-latest
     environment:
       name: github-pages
