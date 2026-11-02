@@ -1,10 +1,14 @@
 {
   "updated_at": "2026-11-02",
-  "data_source": "OpenDART",
-  "status": "no_dart_reports",
-  "message": "OpenDART 기업코드는 확인했지만 설정된 기간에 수집 가능한 공시가 없습니다.",
+  "data_source": "ALIO",
+  "status": "success",
+  "message": "ALIO 요약 재무상태표·손익계산서에서 2021~2025년 5개 연도 자료를 수집했습니다.",
   "corp_code": "01361403",
-  "report_count": 0,
-  "record_count": 0,
+  "dart_report_count": 0,
+  "record_count": 5,
+  "alio_source_urls": [
+    "https://www.alio.go.kr/upload/disclosure/2026/04/13/2026041303150786/doc.html",
+    "https://www.alio.go.kr/upload/disclosure/2026/04/13/2026041303151144/doc.html"
+  ],
   "previous_data_preserved": false
 }
