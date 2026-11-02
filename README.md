@@ -1,24 +1,42 @@
-[![🔗 대시보드 바로가기](https://img.shields.io/badge/🔗_대시보드_바로가기-1751D0?style=for-the-badge)](https://hsc-class02.github.io/EJ_SNUH/)
+[![대시보드 바로가기](https://img.shields.io/badge/대시보드_바로가기-1751D0?style=for-the-badge)](https://hsc-class02.github.io/EJ_SNUH/)
 
-# 서울대학교병원 DART 재무분석 Agent
+# 서울대학교병원 ALIO·DART 재무분석 Agent
 
-Open DART API로 2010년 이후 사업보고서·반기보고서·분기보고서를 수집하고 주요 재무수치와 비율을 계산해 GitHub Pages 대시보드로 배포합니다. 매월 1일 09:00 KST에 자동 갱신됩니다.
+서울대학교병원의 ALIO 경영공시를 기본 자료원으로 사용하고, OpenDART에 조회 가능한 공시가 있는 경우 이를 보완 자료로 활용합니다. 매월 1일 09:00 KST에 재무자료를 수집하고 GitHub Pages 대시보드를 갱신합니다.
+
+## 데이터 소스 및 현재 커버리지
+
+- ALIO 기관코드: `C0083` (서울대학교병원)
+- ALIO 요약 재무상태표: 항목 `3120`
+- ALIO 요약 손익계산서: 항목 `3130`
+- 현재 확보한 최신 공시 기준: 2021~2025년 결산자료 5개년
+- ALIO 표의 단위(백만원)를 대시보드 저장 단위인 원으로 환산
+- DART는 기업코드·공시목록을 확인하고, 재무공시가 없으면 ALIO 자료를 사용
+
+ALIO 요약 재무공시에는 현금흐름표가 포함되어 있지 않으므로 CFO와 FCF는 임의로 추정하지 않고 공란으로 둡니다. 추가 현금흐름 분석에는 외부회계감사보고서 등 상세 재무자료를 별도로 연결해야 합니다.
 
 ## 최초 설정
-1. 이 압축파일의 **내용물**을 `HSC-Class02/EJ_SNUH` 저장소 루트에 업로드합니다.
-2. Open DART에서 API 인증키를 발급합니다.
-3. GitHub 저장소 → Settings → Secrets and variables → Actions → New repository secret에서 이름 `DART_API_KEY`, 값에 발급 키를 입력합니다. 키를 코드에 직접 쓰지 마세요.
-4. Settings → Pages → Source를 **GitHub Actions**로 설정합니다.
-5. Actions → Update DART dashboard → Run workflow를 한 번 실행합니다.
-6. 저장소 우측 About의 톱니바퀴 → Website에 `https://hsc-class02.github.io/EJ_SNUH/`를 입력합니다. About 링크는 GitHub API 권한 없이 파일만으로 자동 변경할 수 없어 최초 1회 수동 설정이 필요합니다.
 
-## 수집·분석 범위
-- 2010년 이후 사업/반기/분기보고서
-- 수익, 영업이익, 순이익, 자산·부채·자본, 현금흐름, CAPEX, FCF
-- 영업·순이익률, 유동·부채·자기자본비율, ROA, ROE, 총자산회전율, CFO/순이익, 이자보상배율
-- 서울대학교병원은 비상장 공공병원이므로 PER/PBR/EV/EBITDA 같은 시장가치 지표는 기본 제외합니다. DART 계정과목 명칭이 연도별로 다르면 값이 비어 있을 수 있습니다.
+1. 저장소 `HSC-Class02/EJ_SNUH`의 Settings → Pages → Source를 **GitHub Actions**로 설정합니다.
+2. ALIO 수집은 공개 공시 페이지를 이용하므로 별도 인증키가 필요하지 않습니다.
+3. DART 자료도 조회하려면 OpenDART 인증키를 발급받아 Settings → Secrets and variables → Actions에 `DART_API_KEY` 이름으로 저장합니다. 인증키를 소스코드에 직접 입력하지 마세요.
+4. Actions → Update SNUH financial dashboard → Run workflow로 수동 실행할 수 있습니다.
+5. 대시보드: https://hsc-class02.github.io/EJ_SNUH/
+
+## 수집·분석 항목
+
+| 구분 | 지표 |
+|---|---|
+| 손익 | 매출, 영업이익, 당기순이익 |
+| 재무상태 | 유동자산, 유동부채, 자산총계, 부채총계, 자본총계 |
+| 수익성 | 영업이익률, 순이익률, ROA, ROE |
+| 안정성 | 유동비율, 부채비율, 자기자본비율 |
+| 현금흐름 | CFO, FCF (ALIO 요약 공시에는 없어 공란 처리) |
+
+비율은 ALIO 요약 재무자료에서 확보 가능한 항목을 사용해 계산합니다. ROA와 ROE는 당기순이익을 기말 자산총계 및 기말 자본총계로 나눈 단순 비율입니다. 동종 병원 간 직접 비교 시에는 회계기준과 법인 범위를 먼저 확인해야 합니다.
 
 ## 국내 Peer Hospitals
+
 | 기관 | 유형 | 비교 관점 |
 |---|---|---|
 | 서울아산병원 | 상급종합병원 | 대형 중증진료·연구·교육 |
@@ -26,24 +44,26 @@ Open DART API로 2010년 이후 사업보고서·반기보고서·분기보고�
 | 세브란스병원 | 상급종합병원 | 대학병원·연구·교육 |
 | 분당서울대학교병원 | 상급종합병원 | 동일 계열·디지털병원 운영 |
 
-Peer는 기능적 유사성 기준 참고 목록이며 재무수치 직접 비교 전 회계기준·법인범위를 확인해야 합니다.
+## 주요 파일
+
+- `src/fetch_alio.py`: ALIO 보고서 HTML 수집 및 재무표 파싱
+- `src/fetch_dart.py`: OpenDART 기업코드 및 공시목록 조회
+- `src/main.py`: 데이터 소스 선택, 지표 계산 및 JSON/CSV 출력
+- `data/raw/alio/`: 수집한 ALIO 원본 HTML
+- `data/processed/financials.csv`: 분석용 재무자료
+- `data/processed/errors.json`: 소스별 수집 오류 기록
+- `docs/data.json`: 대시보드 데이터
+- `.github/workflows/update-dashboard.yml`: 월간 수집 및 Pages 배포
 
 ## 로컬 실행
+
 ```bash
-python -m venv venv
-# Windows: venv\Scripts\activate / macOS·Linux: source venv/bin/activate
+python -m venv .venv
+# Windows: .venv\\Scripts\\activate
+# macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-# Windows PowerShell: $env:DART_API_KEY="발급키"
-# macOS·Linux: export DART_API_KEY="발급키"
+python -m unittest discover -s tests -v
+# DART_API_KEY가 설정되어 있으면 DART도 확인하고, 없거나 재무공시가 없으면 ALIO를 사용합니다.
 python -m src.main
 python -m http.server 8000 -d docs
 ```
-
-## 파일 구조
-- `src/`: DART 수집·변환 Agent
-- `data/raw/`: 공시 목록 원본 메타데이터
-- `data/processed/`: 분석 CSV와 오류 로그
-- `docs/`: GitHub Pages 대시보드
-- `.github/workflows/update-dashboard.yml`: 월간 수집·배포 워크플로
-
-> ZIP에는 운영체제 메타파일이나 기타 숨김파일이 없습니다. 단, GitHub Actions가 요구하는 표준 경로인 `.github` 폴더만 포함합니다.
