@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/**'
       - 'src/**'
+      - 'tests/**'
       - 'index.html'
       - 'config.yml'
       - 'requirements.txt'
@@ -41,7 +42,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Collect DART data
+      - name: Test ALIO parser
+        run: python -m unittest discover -s tests -v
+
+      - name: Collect DART and ALIO data
         env:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: python -m src.main
@@ -76,7 +80,7 @@ jobs:
             printf '[]\n' > docs/data.json
           fi
           if [ ! -s docs/updated.json ]; then
-            printf '{"updated_at":null,"data_source":"OpenDART","status":"pending","message":"DART 자료 수집 결과를 기다리고 있습니다."}\n' > docs/updated.json
+            printf '{"updated_at":null,"data_source":"OpenDART","status":"pending","message":"ALIO·DART 자료 수집 결과를 기다리고 있습니다."}\n' > docs/updated.json
           fi
           test -s docs/index.html
           test -s docs/data.json
