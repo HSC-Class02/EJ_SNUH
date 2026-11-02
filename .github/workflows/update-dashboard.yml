@@ -1,6 +1,14 @@
 name: Update SNUH financial dashboard
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'index.html'
+      - 'config.yml'
+      - 'requirements.txt'
   workflow_dispatch:
   schedule:
     - cron: "0 0 1 * *"
