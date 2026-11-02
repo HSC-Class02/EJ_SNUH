@@ -9,6 +9,9 @@ on:
       - 'index.html'
       - 'config.yml'
       - 'requirements.txt'
+      - 'data/**'
+      - 'docs/data.json'
+      - 'docs/updated.json'
   workflow_dispatch:
   schedule:
     - cron: "0 0 1 * *"
@@ -43,26 +46,41 @@ jobs:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: python -m src.main
 
+      - name: Commit collected data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs/data.json docs/updated.json
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "Update SNUH DART data"
+            git push
+          fi
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Prepare GitHub Pages site
         run: |
           mkdir -p docs
           cp index.html docs/index.html
           touch docs/.nojekyll
+          if [ ! -s docs/data.json ]; then
+            printf '[]\n' > docs/data.json
+          fi
+          if [ ! -s docs/updated.json ]; then
+            printf '{"updated_at":null,"data_source":"OpenDART","status":"pending","message":"DART 자료 수집 결과를 기다리고 있습니다."}\n' > docs/updated.json
+          fi
           test -s docs/index.html
           test -s docs/data.json
           test -s docs/updated.json
-
-      - name: Commit collected data and site files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data docs
-          if git diff --cached --quiet; then
-            echo "No data changes to commit."
-          else
-            git commit -m "Update SNUH dashboard data and site"
-            git push
-          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -72,13 +90,6 @@ jobs:
         with:
           path: docs
 
-  deploy:
-    needs: collect
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
